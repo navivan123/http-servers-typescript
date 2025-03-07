@@ -15,19 +15,19 @@ export function middlewareLogResponses(req: Request, res: Response, next: NextFu
 
 export function middlewareMetricsInc(req: Request, _: Response, next: NextFunction) {
     if (!req.path.startsWith('/admin')) {
-        config.fileserverHits++;
+        config.api.fileserverHits++;
     }
     next();
 }
 
 export function errorHandler(err: Error, _: Request, res: Response, __: NextFunction,) {
-    console.log(`Error: ${err}\n`)
+    console.error("Error ->", err.stack || err);
     if (err instanceof HTTPError) {
         respondWithError(res, err.code, err.message);
         //res.status(err.code).send(err.message);
     } else {
-        res.end()
-        //res.status(500).send('Internal Server Error: ${err.message}')
+        //res.end()
+        res.status(500).send(`Internal Server Error: ${err.message}`)
     }
 }
 
